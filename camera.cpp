@@ -1,7 +1,9 @@
 #include "camera.h"
+#include <iostream>
 
 void Camera::update(Uint32 mousestate, const Uint8 *keystate,
                     const std::tuple<int, int> &mouse_pos) {
+    // 矢印キーで移動
     float speed = 50;
     if (keystate[SDL_SCANCODE_DOWN])
         m_py += speed;
@@ -12,6 +14,7 @@ void Camera::update(Uint32 mousestate, const Uint8 *keystate,
     if (keystate[SDL_SCANCODE_UP])
         m_py -= speed;
 
+    // 中クリックで移動
     auto [pos_px, pos_py] = mouse_pos;
     if (mousestate & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
         if (m_prev_pos.has_value()) {
@@ -22,5 +25,21 @@ void Camera::update(Uint32 mousestate, const Uint8 *keystate,
         m_prev_pos = {pos_px, pos_py};
     } else {
         m_prev_pos = std::nullopt;
+        if (mousestate & SDL_BUTTON(SDL_BUTTON_X1)) {
+            std::cout << "test" << std::endl;
+        }
+    }
+}
+
+void Camera::update(const SDL_Event &e) {
+    // マウスホイールでズーム
+    // TODO: 座標を変更していないのですごく不自然なズームになる
+    float zoom_speed = 0.2;
+    if (e.type == SDL_MOUSEWHEEL) {
+        if (e.wheel.y > 0) {
+            m_zoom *= (1 + zoom_speed);
+        } else if (e.wheel.y < 0) {
+            m_zoom *= (1 - zoom_speed);
+        }
     }
 }

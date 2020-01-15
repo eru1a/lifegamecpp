@@ -12,10 +12,12 @@ void LifeGame::update() {
     // カメラを更新
     m_camera.update(mousestate, keystate, {px, py});
     auto [camera_px, camera_py] = m_camera.get_pos();
+    float zoom = m_camera.get_zoom();
+    float gs = GS * zoom;
 
     // 左クリックで誕生させる。右クリックで死滅させる。
-    int x = (px + camera_px) / GS;
-    int y = (py + camera_py) / GS;
+    int x = (px + camera_px) / gs;
+    int y = (py + camera_py) / gs;
     if (0 <= x && x < m_col && 0 <= y && y < m_row) {
         if (mousestate & SDL_BUTTON(SDL_BUTTON_LEFT)) {
             m_field.at(y).at(x) = true;
@@ -27,6 +29,8 @@ void LifeGame::update() {
     if (m_running)
         step();
 }
+
+void LifeGame::update(const SDL_Event &e) { m_camera.update(e); }
 
 void LifeGame::step() {
     std::vector<std::vector<bool>> next(m_row, std::vector<bool>(m_col, false));
@@ -62,10 +66,12 @@ void LifeGame::clear() {
 
 void LifeGame::draw(SDL_Renderer *renderer) const {
     auto [camera_px, camera_py] = m_camera.get_pos();
+    float zoom = m_camera.get_zoom();
+    float gs = GS * zoom;
     // TODO: 全部を描画しているけど見える範囲だけ描画すればいい
     for (int y = 0; y < m_row; y++) {
         for (int x = 0; x < m_col; x++) {
-            SDL_FRect rect = {x * GS - camera_px, y * GS - camera_py, GS, GS};
+            SDL_FRect rect = {x * gs - camera_px, y * gs - camera_py, gs, gs};
             if (m_field.at(y).at(x)) {
                 SDL_SetRenderDrawColor(renderer, 0, 200, 0, 255);
                 SDL_RenderFillRectF(renderer, &rect);
@@ -74,6 +80,7 @@ void LifeGame::draw(SDL_Renderer *renderer) const {
                 SDL_RenderFillRectF(renderer, &rect);
             }
             // グリッド
+            // TODO: zoomに合わせてグリッドの幅を変更する
             SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
             SDL_RenderDrawRectF(renderer, &rect);
         }

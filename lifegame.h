@@ -14,6 +14,7 @@ public:
     void step();
     void clear();
     void update();
+    void update(const SDL_Event &e);
     void draw(SDL_Renderer *renderer) const;
 
     void run() { m_running = true; }
