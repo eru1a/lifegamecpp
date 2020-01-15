@@ -12,6 +12,7 @@ add_executable(${PROJECT_NAME}
   main.cpp
   common.cpp
   lifegame.cpp
+  camera.cpp
   )
 
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS})

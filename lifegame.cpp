@@ -1,14 +1,16 @@
 #include "lifegame.h"
 
-void LifeGame::update() {
+void LifeGame::update(const Camera &camera) {
     int px, py;
     Uint32 mousestate = SDL_GetMouseState(&px, &py);
-    int x = px / GS;
-    int y = py / GS;
-    if (mousestate & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-        m_field.at(y).at(x) = true;
-    } else if (mousestate & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
-        m_field.at(y).at(x) = false;
+    int x = (px + camera.px) / GS;
+    int y = (py + camera.py) / GS;
+    if (0 <= x && x < m_col && 0 <= y && y < m_row) {
+        if (mousestate & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+            m_field.at(y).at(x) = true;
+        } else if (mousestate & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
+            m_field.at(y).at(x) = false;
+        }
     }
     if (m_running)
         step();
@@ -46,10 +48,11 @@ void LifeGame::clear() {
     m_running = false;
 }
 
-void LifeGame::draw(SDL_Renderer *renderer) const {
+void LifeGame::draw(SDL_Renderer *renderer, const Camera &camera) const {
+    // TODO: 全部を描画しているけど見える範囲だけ描画すればいい
     for (int y = 0; y < m_row; y++) {
         for (int x = 0; x < m_col; x++) {
-            SDL_FRect rect = {x * GS, y * GS, GS, GS};
+            SDL_FRect rect = {x * GS - camera.px, y * GS - camera.py, GS, GS};
             if (m_field.at(y).at(x)) {
                 SDL_SetRenderDrawColor(renderer, 0, 200, 0, 255);
                 SDL_RenderFillRectF(renderer, &rect);

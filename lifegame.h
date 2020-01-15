@@ -1,5 +1,6 @@
 #pragma once
 
+#include "camera.h"
 #include "common.h"
 #include <SDL2/SDL.h>
 #include <vector>
@@ -12,8 +13,8 @@ public:
 
     void step();
     void clear();
-    void update();
-    void draw(SDL_Renderer *renderer) const;
+    void update(const Camera &camera);
+    void draw(SDL_Renderer *renderer, const Camera &camera) const;
 
     void run() { m_running = true; }
     void stop() { m_running = false; }

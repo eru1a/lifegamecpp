@@ -1,3 +1,4 @@
+#include "camera.h"
 #include "common.h"
 #include "lifegame.h"
 #include <SDL2/SDL.h>
@@ -19,7 +20,8 @@ int main() {
     SDL_Event e;
     bool quit = false;
 
-    LifeGame lifegame(WIDTH / GS, HEIGHT / GS);
+    LifeGame lifegame(100, 100);
+    Camera camera(0, 0);
 
     while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
@@ -49,8 +51,9 @@ int main() {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        lifegame.update();
-        lifegame.draw(renderer);
+        camera.update();
+        lifegame.update(camera);
+        lifegame.draw(renderer, camera);
 
         SDL_RenderPresent(renderer);
     }
