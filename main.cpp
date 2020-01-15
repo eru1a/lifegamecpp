@@ -21,7 +21,7 @@ int main() {
     bool quit = false;
 
     LifeGame lifegame(100, 100);
-    Camera camera(0, 0);
+    Camera camera;
 
     while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
