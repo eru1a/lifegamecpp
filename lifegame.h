@@ -13,8 +13,8 @@ public:
 
     void step();
     void clear();
-    void update(const Camera &camera);
-    void draw(SDL_Renderer *renderer, const Camera &camera) const;
+    void update();
+    void draw(SDL_Renderer *renderer) const;
 
     void run() { m_running = true; }
     void stop() { m_running = false; }
@@ -26,6 +26,7 @@ private:
     std::vector<std::vector<bool>> m_field;
     int m_generation = 0;
     bool m_running = false;
+    Camera m_camera;
 
     /// 周囲8マスの生きてるセルの数を返す
     int around(int x, int y) const;
