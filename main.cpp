@@ -36,16 +36,6 @@ int main() {
                 case SDLK_q:
                     quit = true;
                     break;
-                case SDLK_n:
-                    lifegame.step();
-                    break;
-                case SDLK_c:
-                    lifegame.clear();
-                    break;
-                case SDLK_SPACE:
-                case SDLK_s:
-                    lifegame.toggle();
-                    break;
                 }
             }
             // SDL_Eventを使った更新

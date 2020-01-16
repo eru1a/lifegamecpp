@@ -30,7 +30,24 @@ void LifeGame::update() {
         step();
 }
 
-void LifeGame::update(const SDL_Event &e) { m_camera.update(e); }
+void LifeGame::update(const SDL_Event &e) {
+    m_camera.update(e);
+
+    if (e.type == SDL_KEYDOWN) {
+        switch (e.key.keysym.sym) {
+        case SDLK_n:
+            step();
+            break;
+        case SDLK_c:
+            clear();
+            break;
+        case SDLK_SPACE:
+        case SDLK_s:
+            toggle();
+            break;
+        }
+    }
+}
 
 void LifeGame::step() {
     std::vector<std::vector<bool>> next(m_row, std::vector<bool>(m_col, false));

@@ -34,12 +34,9 @@ void Camera::update(Uint32 mousestate, const Uint8 *keystate,
 void Camera::update(const SDL_Event &e) {
     // マウスホイールでズーム
     // TODO: 座標を変更していないのですごく不自然なズームになる
-    float zoom_speed = 0.2;
     if (e.type == SDL_MOUSEWHEEL) {
-        if (e.wheel.y > 0) {
-            m_zoom *= (1 + zoom_speed);
-        } else if (e.wheel.y < 0) {
-            m_zoom *= (1 - zoom_speed);
-        }
+        // e.wheel.yは上スクロールなら正、下スクロールなら負の値となる
+        float zoom_speed = 0.2 * e.wheel.y;
+        m_zoom *= (1 + zoom_speed);
     }
 }
