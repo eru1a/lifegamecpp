@@ -25,18 +25,28 @@ void Camera::update(Uint32 mousestate, const Uint8 *keystate,
         m_prev_pos = {pos_px, pos_py};
     } else {
         m_prev_pos = std::nullopt;
-        if (mousestate & SDL_BUTTON(SDL_BUTTON_X1)) {
-            std::cout << "test" << std::endl;
-        }
     }
 }
 
-void Camera::update(const SDL_Event &e) {
+void Camera::update(const SDL_Event &e, const std::tuple<int, int> &mouse_pos) {
     // マウスホイールでズーム
-    // TODO: 座標を変更していないのですごく不自然なズームになる
-    if (e.type == SDL_MOUSEWHEEL) {
-        // e.wheel.yは上スクロールなら正、下スクロールなら負の値となる
-        float zoom_speed = 0.2 * e.wheel.y;
-        m_zoom *= (1 + zoom_speed);
-    }
+    if (e.type != SDL_MOUSEWHEEL)
+        return;
+
+    // e.wheel.yは上スクロールなら正、下スクロールなら負の値となる
+    float delta_zoom = 0.2 * e.wheel.y;
+    float zoom_level = (1 + delta_zoom);
+    m_zoom *= zoom_level;
+
+    // TODO: ずれる。カーソルを中心に拡大/縮小ってどうやるの...
+    auto [mouse_px, mouse_py] = mouse_pos;
+    double fx = (m_px + mouse_px) / m_zoom;
+    double fy = (m_py + mouse_py) / m_zoom;
+    m_px += delta_zoom * fx;
+    m_py += delta_zoom * fy;
+
+    // これも駄目
+    // auto [mouse_px, mouse_py] = mouse_pos;
+    // m_px = m_px + (mouse_px - m_px) * (1 - 1 / zoom_level);
+    // m_py = m_py + (mouse_py - m_py) * (1 - 1 / zoom_level);
 }

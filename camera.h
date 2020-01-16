@@ -14,7 +14,7 @@ public:
     float get_zoom() const { return m_zoom; }
 
     void update(Uint32 mousestate, const Uint8 *keystate, const std::tuple<int, int> &mouse_pos);
-    void update(const SDL_Event &e);
+    void update(const SDL_Event &e, const std::tuple<int, int> &mouse_pos);
 
 private:
     float m_px;
