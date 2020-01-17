@@ -31,11 +31,7 @@ void LifeGame::update() {
 }
 
 void LifeGame::update(const SDL_Event &e) {
-    // マウスの座標
-    int px, py;
-    SDL_GetMouseState(&px, &py);
-
-    m_camera.update(e, {px, py});
+    m_camera.update(e);
 
     if (e.type == SDL_KEYDOWN) {
         switch (e.key.keysym.sym) {
