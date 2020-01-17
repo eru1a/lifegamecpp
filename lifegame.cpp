@@ -1,4 +1,5 @@
 #include "lifegame.h"
+#include <algorithm>
 #include <iostream>
 
 void LifeGame::update() {
@@ -85,10 +86,18 @@ void LifeGame::draw(SDL_Renderer *renderer) const {
     auto [camera_px, camera_py] = m_camera.get_pos();
     float zoom = m_camera.get_zoom();
     float gs = GS * zoom;
-    // TODO: 全部を描画しているけど見える範囲だけ描画すればいい
-    for (int y = 0; y < m_row; y++) {
-        for (int x = 0; x < m_col; x++) {
-            SDL_FRect rect = {x * gs - camera_px, y * gs - camera_py, gs, gs};
+    // 必要な範囲だけ描画する
+    int startx = std::max(0, int(camera_px / gs));
+    int starty = std::max(0, int(camera_py / gs));
+    for (int y = starty; y < m_row; y++) {
+        float py = y * gs - camera_py;
+        if (py > HEIGHT)
+            break;
+        for (int x = startx; x < m_col; x++) {
+            float px = x * gs - camera_px;
+            if (px > WIDTH)
+                break;
+            SDL_FRect rect = {px, py, gs, gs};
             if (m_field.at(y).at(x)) {
                 SDL_SetRenderDrawColor(renderer, 0, 200, 0, 255);
                 SDL_RenderFillRectF(renderer, &rect);

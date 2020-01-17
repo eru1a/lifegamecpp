@@ -25,9 +25,6 @@ void Camera::update(Uint32 mousestate, const Uint8 *keystate,
         m_prev_pos = {pos_px, pos_py};
     } else {
         m_prev_pos = std::nullopt;
-        if (mousestate & SDL_BUTTON(SDL_BUTTON_X1)) {
-            std::cout << "test" << std::endl;
-        }
     }
 }
 
