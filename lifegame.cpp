@@ -1,5 +1,6 @@
 #include "lifegame.h"
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 
 void LifeGame::update() {
@@ -111,6 +112,21 @@ void LifeGame::draw(SDL_Renderer *renderer) const {
             SDL_RenderDrawRectF(renderer, &rect);
         }
     }
+
+    // マウスで選択されているセルを黄色で強調する
+    // TODO: 範囲チェック
+    int mouse_px, mouse_py;
+    SDL_GetMouseState(&mouse_px, &mouse_py);
+    // 複雑...
+    float selected_px =
+        (std::floor((mouse_px + camera_px) / gs) - std::floor(camera_px / gs)) * gs -
+        (camera_px - std::floor(camera_px / gs) * gs);
+    float selected_py =
+        (std::floor((mouse_py + camera_py) / gs) - std::floor(camera_py / gs)) * gs -
+        (camera_py - std::floor(camera_py / gs) * gs);
+    SDL_FRect selected_ = {selected_px, selected_py, gs, gs};
+    SDL_SetRenderDrawColor(renderer, 200, 200, 0, 255);
+    SDL_RenderDrawRectF(renderer, &selected_);
 }
 
 int LifeGame::around(int x, int y) const {
