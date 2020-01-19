@@ -1,4 +1,6 @@
 #include "common.h"
+#include <algorithm>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -66,6 +68,13 @@ SDL_Texture *load_texture(SDL_Renderer *renderer, const std::string &path, bool 
     return img;
 }
 
+// 15字以上の文字列に対して、13~15文字目を...にしてそれ以降を切り捨てた文字列を返す
+std::string compress(const std::string &str) {
+    if (str.length() < 15)
+        return str;
+    return str.substr(0, 15) + "...";
+}
+
 Pattern load_pattern(const std::string &file) {
     std::ifstream ifs(file);
     if (!ifs) {
@@ -76,17 +85,29 @@ Pattern load_pattern(const std::string &file) {
     std::cin.rdbuf(ifs.rdbuf());
 
     std::string name;
-    int col, row;
-    std::cin >> name >> col >> row;
+    std::getline(ifs, name);
+    int row, col;
+    std::cin >> row >> col;
 
     std::vector<std::vector<bool>> pattern(row, std::vector<bool>(col, false));
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
-            int live;
-            std::cin >> live;
-            pattern.at(i).at(j) = live;
+            char c;
+            std::cin >> c;
+            if (c == '1')
+                pattern.at(i).at(j) = true;
         }
     }
 
-    return Pattern{"", 0, 0, pattern};
+    return Pattern{compress(name), row, col, pattern};
+}
+
+std::vector<Pattern> load_patterns(const std::string &dir) {
+    std::vector<Pattern> result;
+    for (const auto &entry : std::filesystem::directory_iterator(dir))
+        result.push_back(load_pattern(entry.path()));
+    // col * row が小さい順にソートする
+    std::sort(result.begin(), result.end(),
+              [](const auto &p1, const auto &p2) { return p1.col * p1.row < p2.col * p2.row; });
+    return result;
 }

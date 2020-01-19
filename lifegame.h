@@ -10,10 +10,8 @@ public:
     LifeGame(SDL_Renderer *renderer, int col, int row, int width, int height, SDL_Rect viewport)
         : m_renderer(renderer), m_col(col), m_row(row), m_width(width), m_height(height),
           m_viewport(viewport),
-          m_field(std::vector<std::vector<bool>>(row, std::vector<bool>(col, false))) {
-        m_patterns = {Pattern{"pixel", 1, 1, {{1}}},
-                      Pattern{"test", 3, 3, {{1, 0, 1}, {0, 1, 0}, {1, 0, 1}}}};
-    }
+          m_field(std::vector<std::vector<bool>>(row, std::vector<bool>(col, false))),
+          m_patterns(load_patterns("./patterns")) {}
 
     void step();
     void clear();

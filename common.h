@@ -29,8 +29,10 @@ SDL_Texture *load_texture(SDL_Renderer *renderer, const std::string &path, bool 
 
 struct Pattern {
     std::string name;
-    int col, row;
+    int row;
+    int col;
     std::vector<std::vector<bool>> pattern;
 };
 
 Pattern load_pattern(const std::string &file);
+std::vector<Pattern> load_patterns(const std::string &dir);

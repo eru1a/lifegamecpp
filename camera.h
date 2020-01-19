@@ -8,7 +8,7 @@
 class Camera {
 public:
     Camera() : m_px(0), m_py(0), m_zoom(1) {}
-    Camera(float px, float py) : m_px(px), m_py(py) {}
+    Camera(float px, float py) : m_px(px), m_py(py), m_zoom(1) {}
 
     std::tuple<float, float> get_pos() const { return {m_px, m_py}; }
     float get_zoom() const { return m_zoom; }

@@ -1,6 +1,7 @@
 #include "toolbar.h"
 #include "lifegame.h"
 
+// (px, py)の座標がrectの中に含まれるか
 bool contain(int px, int py, const SDL_Rect &rect) {
     return (rect.x <= px && px <= rect.x + rect.w && rect.y <= py && py <= rect.y + rect.h);
 }
@@ -64,7 +65,7 @@ void ToolBar::draw() const {
     SDL_RenderCopy(m_renderer, m_left_button, nullptr, &m_left_rect);
     SDL_RenderCopy(m_renderer, m_right_button, nullptr, &m_right_rect);
 
-    SDL_Rect pattern_texture_rect = {m_pattern_rect.x + 10, m_pattern_rect.y,
+    SDL_Rect pattern_texture_rect = {m_pattern_rect.x + 10, m_pattern_rect.y + 3,
                                      m_pattern_texture_width, m_pattern_texture_height};
     SDL_RenderCopy(m_renderer, m_pattern_texture, nullptr, &pattern_texture_rect);
     SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
