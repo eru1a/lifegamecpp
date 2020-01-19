@@ -17,13 +17,23 @@ void LifeGame::update() {
     float gs = GS * zoom;
 
     // 左クリックで誕生させる。右クリックで死滅させる。
-    int x = std::floor((mouse_px + camera_px) / gs);
-    int y = std::floor((mouse_py + camera_py) / gs);
-    if (0 <= x && x < m_col && 0 <= y && y < m_row) {
+    int selected_x = std::floor((mouse_px + camera_px) / gs);
+    int selected_y = std::floor((mouse_py + camera_py) / gs);
+    if (0 <= selected_x && selected_x < m_col && 0 <= selected_y && selected_y < m_row) {
         if (mousestate & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-            m_field.at(y).at(x) = true;
+            Pattern pattern = m_patterns.at(m_current_pattern_index);
+            for (int yy = 0; yy < pattern.row; yy++) {
+                for (int xx = 0; xx < pattern.col; xx++) {
+                    int x = selected_x + xx;
+                    int y = selected_y + yy;
+                    if (0 <= x && x < m_col && 0 <= y && y < m_row &&
+                        pattern.pattern.at(yy).at(xx)) {
+                        m_field.at(y).at(x) = true;
+                    }
+                }
+            }
         } else if (mousestate & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
-            m_field.at(y).at(x) = false;
+            m_field.at(selected_y).at(selected_x) = false;
         }
     }
 
@@ -82,8 +92,8 @@ void LifeGame::clear() {
     m_running = false;
 }
 
-void LifeGame::draw(SDL_Renderer *renderer) const {
-    SDL_RenderSetViewport(renderer, &m_viewport);
+void LifeGame::draw() const {
+    SDL_RenderSetViewport(m_renderer, &m_viewport);
     auto [camera_px, camera_py] = m_camera.get_pos();
     float zoom = m_camera.get_zoom();
     float gs = GS * zoom;
@@ -100,20 +110,20 @@ void LifeGame::draw(SDL_Renderer *renderer) const {
                 break;
             SDL_FRect rect = {px, py, gs, gs};
             if (m_field.at(y).at(x)) {
-                SDL_SetRenderDrawColor(renderer, 0, 200, 0, 255);
-                SDL_RenderFillRectF(renderer, &rect);
+                SDL_SetRenderDrawColor(m_renderer, 0, 200, 0, 255);
+                SDL_RenderFillRectF(m_renderer, &rect);
             } else {
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                SDL_RenderFillRectF(renderer, &rect);
+                SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+                SDL_RenderFillRectF(m_renderer, &rect);
             }
             // グリッド
             // TODO: zoomに合わせてグリッドの幅を変更する
-            SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
-            SDL_RenderDrawRectF(renderer, &rect);
+            SDL_SetRenderDrawColor(m_renderer, 50, 50, 50, 255);
+            SDL_RenderDrawRectF(m_renderer, &rect);
         }
     }
 
-    // マウスで選択されているセルを黄色で強調する
+    // マウスで選択されているセルに合わせて今のパターンを描画
     // TODO: 範囲チェック
     auto [mouse_px, mouse_py, mousestate] = get_mousestate(m_viewport);
     // 使わない変数を受け取らないようにするには...?
@@ -125,9 +135,18 @@ void LifeGame::draw(SDL_Renderer *renderer) const {
     float selected_py =
         (std::floor((mouse_py + camera_py) / gs) - std::floor(camera_py / gs)) * gs -
         (camera_py - std::floor(camera_py / gs) * gs);
-    SDL_FRect selected_ = {selected_px, selected_py, gs, gs};
-    SDL_SetRenderDrawColor(renderer, 200, 200, 0, 255);
-    SDL_RenderDrawRectF(renderer, &selected_);
+    Pattern pattern = m_patterns.at(m_current_pattern_index);
+    for (int y = 0; y < pattern.row; y++) {
+        for (int x = 0; x < pattern.col; x++) {
+            if (pattern.pattern.at(y).at(x)) {
+                SDL_FRect rect = {selected_px + x * gs, selected_py + y * gs, gs, gs};
+                SDL_SetRenderDrawColor(m_renderer, 0, 0, 200, 255);
+                SDL_RenderFillRectF(m_renderer, &rect);
+                SDL_SetRenderDrawColor(m_renderer, 50, 50, 50, 255);
+                SDL_RenderDrawRectF(m_renderer, &rect);
+            }
+        }
+    }
 }
 
 int LifeGame::around(int x, int y) const {

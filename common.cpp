@@ -1,4 +1,5 @@
 #include "common.h"
+#include <fstream>
 #include <iostream>
 
 void sdl_error(const std::string &msg) {
@@ -8,6 +9,11 @@ void sdl_error(const std::string &msg) {
 
 void img_error(const std::string &msg) {
     std::cerr << msg << " SDL_image Error: " << IMG_GetError() << std::endl;
+    exit(1);
+}
+
+void ttf_error(const std::string &msg) {
+    std::cerr << msg << " SDL_ttf Error: " << TTF_GetError() << std::endl;
     exit(1);
 }
 
@@ -58,4 +64,29 @@ SDL_Texture *load_texture(SDL_Renderer *renderer, const std::string &path, bool 
 
     SDL_FreeSurface(loaded_surface);
     return img;
+}
+
+Pattern load_pattern(const std::string &file) {
+    std::ifstream ifs(file);
+    if (!ifs) {
+        std::cerr << "ファイルオープン失敗: " << file << std::endl;
+        exit(1);
+    }
+
+    std::cin.rdbuf(ifs.rdbuf());
+
+    std::string name;
+    int col, row;
+    std::cin >> name >> col >> row;
+
+    std::vector<std::vector<bool>> pattern(row, std::vector<bool>(col, false));
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            int live;
+            std::cin >> live;
+            pattern.at(i).at(j) = live;
+        }
+    }
+
+    return Pattern{"", 0, 0, pattern};
 }
