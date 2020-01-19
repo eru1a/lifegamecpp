@@ -1,10 +1,12 @@
 #include "common.h"
-#include "lifegame.h"
+#include "mainwindow.h"
 #include <SDL2/SDL.h>
 
 int main() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
         sdl_error("SDLの初期化に失敗");
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
+        img_error("SDL_imageの初期化に失敗");
 
     auto window = SDL_CreateWindow("LifeGame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                    WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
@@ -19,7 +21,7 @@ int main() {
     SDL_Event e;
     bool quit = false;
 
-    LifeGame lifegame(100, 100);
+    MainWindow mainwindow(renderer);
 
     while (!quit) {
         // 黒で塗りつぶす
@@ -39,11 +41,11 @@ int main() {
                 }
             }
             // SDL_Eventを使った更新
-            lifegame.update(e);
+            mainwindow.update(e);
         }
 
-        lifegame.update();
-        lifegame.draw(renderer);
+        mainwindow.update();
+        mainwindow.draw(renderer);
 
         SDL_RenderPresent(renderer);
     }
@@ -53,6 +55,7 @@ int main() {
     renderer = nullptr;
     window = nullptr;
 
+    IMG_Quit();
     SDL_Quit();
 
     return 0;

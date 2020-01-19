@@ -7,19 +7,18 @@ void LifeGame::update() {
     // マウスとキーボードの状態を取得
     // マウスを動かすまで座標が常に(0, 0)になるのはバグ?
     // https://bugzilla.libsdl.org/show_bug.cgi?id=3487
-    int px, py;
-    Uint32 mousestate = SDL_GetMouseState(&px, &py);
+    auto [mouse_px, mouse_py, mousestate] = get_mousestate(m_viewport);
     const Uint8 *keystate = SDL_GetKeyboardState(nullptr);
 
     // カメラを更新
-    m_camera.update(mousestate, keystate, {px, py});
+    m_camera.update(mousestate, keystate, {mouse_px, mouse_py});
     auto [camera_px, camera_py] = m_camera.get_pos();
     float zoom = m_camera.get_zoom();
     float gs = GS * zoom;
 
     // 左クリックで誕生させる。右クリックで死滅させる。
-    int x = (px + camera_px) / gs;
-    int y = (py + camera_py) / gs;
+    int x = std::floor((mouse_px + camera_px) / gs);
+    int y = std::floor((mouse_py + camera_py) / gs);
     if (0 <= x && x < m_col && 0 <= y && y < m_row) {
         if (mousestate & SDL_BUTTON(SDL_BUTTON_LEFT)) {
             m_field.at(y).at(x) = true;
@@ -84,6 +83,7 @@ void LifeGame::clear() {
 }
 
 void LifeGame::draw(SDL_Renderer *renderer) const {
+    SDL_RenderSetViewport(renderer, &m_viewport);
     auto [camera_px, camera_py] = m_camera.get_pos();
     float zoom = m_camera.get_zoom();
     float gs = GS * zoom;
@@ -92,11 +92,11 @@ void LifeGame::draw(SDL_Renderer *renderer) const {
     int starty = std::max(0, int(camera_py / gs));
     for (int y = starty; y < m_row; y++) {
         float py = y * gs - camera_py;
-        if (py > HEIGHT)
+        if (py > m_height)
             break;
         for (int x = startx; x < m_col; x++) {
             float px = x * gs - camera_px;
-            if (px > WIDTH)
+            if (px > m_width)
                 break;
             SDL_FRect rect = {px, py, gs, gs};
             if (m_field.at(y).at(x)) {
@@ -115,8 +115,9 @@ void LifeGame::draw(SDL_Renderer *renderer) const {
 
     // マウスで選択されているセルを黄色で強調する
     // TODO: 範囲チェック
-    int mouse_px, mouse_py;
-    SDL_GetMouseState(&mouse_px, &mouse_py);
+    auto [mouse_px, mouse_py, mousestate] = get_mousestate(m_viewport);
+    // 使わない変数を受け取らないようにするには...?
+    (void)mousestate;
     // 複雑...
     float selected_px =
         (std::floor((mouse_px + camera_px) / gs) - std::floor(camera_px / gs)) * gs -
