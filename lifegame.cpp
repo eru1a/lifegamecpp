@@ -20,7 +20,7 @@ void LifeGame::update() {
     int selected_x = std::floor((mouse_px + camera_px) / gs);
     int selected_y = std::floor((mouse_py + camera_py) / gs);
     if (0 <= selected_x && selected_x < m_col && 0 <= selected_y && selected_y < m_row) {
-        if (mousestate & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+        if (mousestate & SDL_BUTTON_LMASK) {
             Pattern pattern = m_patterns.at(m_current_pattern_index);
             for (int yy = 0; yy < pattern.row; yy++) {
                 for (int xx = 0; xx < pattern.col; xx++) {
@@ -32,7 +32,7 @@ void LifeGame::update() {
                     }
                 }
             }
-        } else if (mousestate & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
+        } else if (mousestate & SDL_BUTTON_RMASK) {
             m_field.at(selected_y).at(selected_x) = false;
         }
     }

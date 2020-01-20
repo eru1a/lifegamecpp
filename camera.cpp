@@ -16,7 +16,7 @@ void Camera::update(Uint32 mousestate, const Uint8 *keystate,
 
     // 中クリックで移動
     auto [pos_px, pos_py] = mouse_pos;
-    if (mousestate & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
+    if (mousestate & SDL_BUTTON_MMASK) {
         if (m_prev_pos.has_value()) {
             auto [prev_px, prev_py] = m_prev_pos.value();
             m_px += (prev_px - pos_px);
