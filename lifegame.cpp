@@ -20,7 +20,8 @@ void LifeGame::update() {
     // 左クリックで誕生させる。右クリックで死滅させる。
     int selected_x = std::floor((mouse_px + camera_px) / gs);
     int selected_y = std::floor((mouse_py + camera_py) / gs);
-    if (0 <= selected_x && selected_x < m_col && 0 <= selected_y && selected_y < m_row) {
+    if (0 <= selected_x && selected_x < m_col && 0 <= selected_y && selected_y < m_row &&
+        mouse_px > 0 && mouse_py > 0) {
         if (mousestate & SDL_BUTTON_LMASK) {
             Pattern pattern = m_patterns.at(m_current_pattern_index);
             for (int yy = 0; yy < pattern.row; yy++) {
@@ -48,6 +49,9 @@ void LifeGame::update(const SDL_Event &e) {
 
     if (e.type == SDL_KEYDOWN) {
         switch (e.key.keysym.sym) {
+        case SDLK_ESCAPE:
+            m_current_pattern_index = 0;
+            break;
         case SDLK_n:
             step();
             break;

@@ -39,7 +39,6 @@ int main() {
                 break;
             } else if (e.type == SDL_KEYDOWN) {
                 switch (e.key.keysym.sym) {
-                case SDLK_ESCAPE:
                 case SDLK_q:
                     quit = true;
                     break;

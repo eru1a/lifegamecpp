@@ -44,12 +44,11 @@ void ToolBar::update(SDL_Event e) {
             m_lifegame->clear();
         } else if (contain(mouse_px, mouse_py, m_left_rect)) {
             m_lifegame->prev_pattern();
-            make_pattern_texture(m_lifegame->current_pattern_name());
         } else if (contain(mouse_px, mouse_py, m_right_rect)) {
             m_lifegame->next_pattern();
-            make_pattern_texture(m_lifegame->current_pattern_name());
         }
     }
+    make_pattern_texture(m_lifegame->current_pattern_name());
 }
 
 void ToolBar::draw() const {
