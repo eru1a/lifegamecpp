@@ -5,8 +5,8 @@
 
 class MainWindow {
 public:
-    MainWindow(SDL_Renderer *renderer, TTF_Font *font)
-        : m_lifegame(renderer, 100, 100, WIDTH, HEIGHT,
+    MainWindow(SDL_Renderer *renderer, TTF_Font *font, int col, int row)
+        : m_lifegame(renderer, col, row, WIDTH, HEIGHT,
                      SDL_Rect{0, ToolBar::button_height + ToolBar::margin * 2, WIDTH,
                               HEIGHT - (ToolBar::button_height + ToolBar::margin * 2)}),
           m_toolbar(renderer, font,

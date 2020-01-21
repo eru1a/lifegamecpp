@@ -26,7 +26,7 @@ int main() {
     SDL_Event e;
     bool quit = false;
 
-    MainWindow mainwindow(renderer, font);
+    MainWindow mainwindow(renderer, font, 200, 200);
 
     while (!quit) {
         // 黒で塗りつぶす

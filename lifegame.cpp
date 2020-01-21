@@ -1,5 +1,6 @@
 #include "lifegame.h"
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <iostream>
 
@@ -37,8 +38,9 @@ void LifeGame::update() {
         }
     }
 
-    if (m_running)
+    if (m_running) {
         step();
+    }
 }
 
 void LifeGame::update(const SDL_Event &e) {
@@ -116,10 +118,6 @@ void LifeGame::draw() const {
                 SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
                 SDL_RenderFillRectF(m_renderer, &rect);
             }
-            // グリッド
-            // TODO: zoomに合わせてグリッドの幅を変更する
-            SDL_SetRenderDrawColor(m_renderer, 50, 50, 50, 255);
-            SDL_RenderDrawRectF(m_renderer, &rect);
         }
     }
 
@@ -142,9 +140,27 @@ void LifeGame::draw() const {
                 SDL_FRect rect = {selected_px + x * gs, selected_py + y * gs, gs, gs};
                 SDL_SetRenderDrawColor(m_renderer, 0, 0, 200, 255);
                 SDL_RenderFillRectF(m_renderer, &rect);
-                SDL_SetRenderDrawColor(m_renderer, 50, 50, 50, 255);
-                SDL_RenderDrawRectF(m_renderer, &rect);
             }
+        }
+    }
+
+    // グリッド
+    // TODO: zoomに合わせてグリッドの幅を変更する
+    SDL_SetRenderDrawColor(m_renderer, 50, 50, 50, 255);
+    {
+        float x0 = 0 * gs - camera_px;
+        float x1 = m_col * gs - camera_px;
+        for (int y = 0; y <= m_row; y++) {
+            float yy = y * gs - camera_py;
+            SDL_RenderDrawLineF(m_renderer, x0, yy, x1, yy);
+        }
+    }
+    {
+        float y0 = 0 * gs - camera_py;
+        float y1 = m_row * gs - camera_py;
+        for (int x = 0; x <= m_col; x++) {
+            float xx = x * gs - camera_px;
+            SDL_RenderDrawLineF(m_renderer, xx, y0, xx, y1);
         }
     }
 }
